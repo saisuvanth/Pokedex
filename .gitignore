@@ -1,4 +1,4 @@
 
-/.vscode
-/bin
-/.txt
+.vscode
+bin
+*.txt
