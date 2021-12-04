@@ -1,18 +1,25 @@
-## Getting Started
+## OOPS PROJECT
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A Record Management app for managing records of pokemon trainers in pokemon world.
 
-## Folder Structure
+## Team Members
+> - Suvanth
+> - Sreekar
+> - Akhil
+> - Sivani
+> - Chetan
 
-The workspace contains two folders by default, where:
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Instructions
+
+Whole code is written in `src` folder.
+
+- `db`: this contains code that interacts with the database.
 
 Meanwhile, the compiled output files will be generated in the `bin` folder by default.
 
 > If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+- fork the repo and navigate to folder `src`.
+- Add mysql driver `mysql-connector-java-8.0.16.jar` to `lib` folder.
 
-## Dependency Management
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
