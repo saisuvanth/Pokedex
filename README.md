@@ -3,11 +3,11 @@
 A Record Management app for managing records of pokemon trainers in pokemon world.
 
 ## Team Members
-> - Suvanth
-> - Sreekar
-> - Akhil
-> - Sivani
-> - Chetan
+> - V Sai Suvanth
+> - V Sai Sreekar
+> - Karnakoti Akhiltej
+> - Sri Sivani Devineni
+> - Battula Chetan Reddy
 
 
 ## Instructions
