@@ -1,0 +1,3 @@
+jdbc:mysql://localhost:3306/pokedex
+root
+suvanth@96
