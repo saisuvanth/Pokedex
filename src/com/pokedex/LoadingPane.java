@@ -9,6 +9,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
 public class LoadingPane extends JWindow {
@@ -55,8 +56,9 @@ public class LoadingPane extends JWindow {
 			protected Boolean doInBackground() throws Exception {
 				try {
 					return DBConnection.initialise(path, username, password);
-				} catch (Exception ex) {
-					ex.printStackTrace();
+				} catch (SQLException ex) {
+					JOptionPane.showMessageDialog(null, "An Error occured while connecting to Database", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
@@ -70,7 +72,8 @@ public class LoadingPane extends JWindow {
 							fw.write(path + "\n" + username + "\n" + password);
 							fw.close();
 						} catch (IOException e) {
-							e.printStackTrace();
+							JOptionPane.showMessageDialog(null, "An error occured while saving file data", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 						db.dispose();
 						dispose();
@@ -82,7 +85,8 @@ public class LoadingPane extends JWindow {
 						db.requestFocus();
 					}
 				} catch (InterruptedException | ExecutionException ex) {
-					ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, "An Interruption has occured", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 

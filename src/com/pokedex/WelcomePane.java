@@ -14,9 +14,20 @@ public class WelcomePane extends JWindow {
 		setLocationRelativeTo(null);
 		setVisible(true);
 		try {
-			worker();
+			Thread t = new Thread() {
+				public void run() {
+					try {
+						worker();
+					} catch (InterruptedException e) {
+						JOptionPane.showMessageDialog(null, "An Interruption has occured while processing", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			};
+			t.start();
 		} catch (Exception e) {
-			System.out.println(e);
+			JOptionPane.showMessageDialog(this, "An error occured while opening the files", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -25,21 +36,16 @@ public class WelcomePane extends JWindow {
 		g.drawImage(welcome, 0, 0, this);
 	}
 
-	private void worker() {
-		try {
-			File file = new File("src/com/pokedex/db/data.txt");
-			if (file.exists()) {
-				Thread.sleep(2000);
-				this.dispose();
-				new UserMenu();
-			} else {
-				Thread.sleep(2000);
-				this.dispose();
-				new DBConnector();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			// Error();
+	private void worker() throws InterruptedException {
+		File file = new File("src/com/pokedex/db/data.txt");
+		if (file.exists()) {
+			Thread.sleep(2000);
+			this.dispose();
+			new UserMenu();
+		} else {
+			Thread.sleep(2000);
+			this.dispose();
+			new DBConnector();
 		}
 	}
 }

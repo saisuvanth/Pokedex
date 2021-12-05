@@ -14,23 +14,11 @@ public class DBDriver {
 	private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	static List<Pokeuser> user;
 
-	private static void sqlLoader() {
-		try {
-			Class.forName(DRIVER);
-			Scanner sc = new Scanner(new FileReader("src/com/pokedex/db/data.txt"));
-			connection = DriverManager.getConnection(sc.nextLine(), sc.nextLine(), sc.nextLine());
-			sc.close();
-		} catch (ClassNotFoundException | FileNotFoundException | SQLException e) {
-
-		}
-	}
-
-	private static void conclose() {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	private static void sqlLoader() throws ClassNotFoundException, FileNotFoundException, SQLException {
+		Class.forName(DRIVER);
+		Scanner sc = new Scanner(new FileReader("src/com/pokedex/db/data.txt"));
+		connection = DriverManager.getConnection(sc.nextLine(), sc.nextLine(), sc.nextLine());
+		sc.close();
 	}
 
 	private static void setParams(PreparedStatement ps, Object[] params) throws SQLException {
@@ -75,11 +63,12 @@ public class DBDriver {
 			e.printStackTrace();
 			return false;
 		} finally {
-			conclose();
+			connection.close();
 		}
 	}
 
-	public static List<Pokeuser> getQuery(String query, Object[] params) {
+	public static List<Pokeuser> getQuery(String query, Object[] params)
+			throws SQLException, ClassNotFoundException, FileNotFoundException {
 		sqlLoader();
 		try {
 			ps = connection.prepareStatement(query);
@@ -92,15 +81,26 @@ public class DBDriver {
 						rs.getString(6), poks));
 			}
 			return user;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
 		} finally {
-			conclose();
+			connection.close();
 		}
 	}
 
-	public static void updateData(String query, Object[] params) {
+	public static void insertData(Object[] params)
+			throws SQLException, ClassNotFoundException, FileNotFoundException {
+		sqlLoader();
+		try {
+			ps = connection.prepareStatement("call insertdata(?,?,?,?,?,?,?,?,?)");
+			setParams(ps, params);
+			ps.executeUpdate();
+			ps.close();
+		} finally {
+			connection.close();
+		}
+	}
+
+	public static void updateData(String query, Object[] params)
+			throws SQLException, ClassNotFoundException, FileNotFoundException {
 		sqlLoader();
 		try {
 			ps = connection.prepareStatement(query);
@@ -110,11 +110,11 @@ public class DBDriver {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			conclose();
+			connection.close();
 		}
 	}
 
-	public static void deleteData(int id) {
+	public static void deleteData(int id) throws SQLException, ClassNotFoundException, FileNotFoundException {
 		sqlLoader();
 		try {
 			cs = connection.prepareCall("{call deletedata(?)}");
@@ -124,7 +124,7 @@ public class DBDriver {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			conclose();
+			connection.close();
 		}
 	}
 }

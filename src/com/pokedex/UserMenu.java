@@ -12,13 +12,15 @@ import java.awt.*;
 import java.util.List;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
 
 public class UserMenu extends SuperWindow implements ActionListener {
 	JPanel navBar, mainMenu;
 	GridBagConstraints gbc;
 	JTextField trainerName, trainerRegion, trainerAge, pokemonName;
 	JRadioButton greaterFlag, lesserFlag;
-	JButton search, delete;
+	JButton search, delete, create;
 	JTable table;
 	List<Pokeuser> pokeuser;
 	final String QUERY = "select * from trainer natural join poketrainer where ";
@@ -114,16 +116,21 @@ public class UserMenu extends SuperWindow implements ActionListener {
 		gbc.gridy = 2;
 		navBar.add(label, gbc);
 
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.fill = GridBagConstraints.NONE;
+		create = new JButton("Create");
+		navBar.add(create, gbc);
 		gbc.gridx = 1;
 		gbc.gridy = 3;
-		gbc.ipadx = 2;
-		gbc.fill = GridBagConstraints.NONE;
+		// gbc.ipadx = 2;
 		search = new JButton("Search");
 		navBar.add(search, gbc);
 		delete = new JButton("Delete");
 		gbc.gridx = 3;
 		gbc.gridy = 3;
 		navBar.add(delete, gbc);
+		create.addActionListener(this);
 		delete.addActionListener(this);
 		search.addActionListener(this);
 	}
@@ -142,80 +149,102 @@ public class UserMenu extends SuperWindow implements ActionListener {
 				less = lesserFlag.isSelected(),
 				great = greaterFlag.isSelected();
 
-		String nameQuery = "name=? ", ageQuery = less ? "age<? " : great ? "age>? " : "age=? ",
+		String nameQuery = "name like concat('%',?,'%')", ageQuery = less ? "age<? " : great ? "age>? " : "age=? ",
 				pokQuery = "(pok1=? or pok2=? or pok3=?) ", regionQuery = "region=? ";
 
 		// checking flags and retrieving data
-		if (!nameflag) {
-			if (!pokemonflag || !regionflag || age != 0) {
-				JOptionPane.showMessageDialog(this,
-						"Name itself is UNIQUE. Why even bother entering other details",
-						"AntiDumb Squad",
-						JOptionPane.INFORMATION_MESSAGE);
-				return;
+		try {
+			if (!nameflag) {
+				if (!pokemonflag || !regionflag || age != 0) {
+					JOptionPane.showMessageDialog(this,
+							"Name itself is Enough. Why even bother entering other details",
+							"AntiDumb Squad",
+							JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				params = new String[] { name };
+				pokeuser = DBDriver.getQuery(QUERY + nameQuery, params);
+				createTable();
+			} else {
+				if (pokemonflag && regionflag && age == 0) {
+					pokeuser = DBDriver.getQuery(QUERY.substring(0, QUERY.lastIndexOf(" w")), null);
+					createTable();
+					return;
+				}
+				if (age != 0 && pokemonflag && regionflag) { // single flags
+					params = new String[] { age + "" };
+					pokeuser = DBDriver.getQuery(QUERY + ageQuery, params);
+					createTable();
+					return;
+				} else if (!regionflag && pokemonflag && age == 0) {
+					params = new String[] { region };
+					pokeuser = DBDriver.getQuery(QUERY + regionQuery, params);
+					createTable();
+					return;
+				} else if (!pokemonflag && regionflag && age == 0) {
+					params = new String[] { pokemon, pokemon, pokemon };
+					pokeuser = DBDriver.getQuery(QUERY + pokQuery, params);
+					createTable();
+					return;
+				} else if (pokemonflag && !regionflag && age != 0) { // two flags
+					params = new String[] { age + "", region };
+					pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + regionQuery, params);
+					createTable();
+					return;
+				} else if (regionflag && !pokemonflag && age != 0) {
+					params = new String[] { age + "", pokemon, pokemon, pokemon };
+					pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + pokQuery, params);
+					createTable();
+					return;
+				} else if (!pokemonflag && !regionflag && age == 0) {
+					params = new String[] { region, pokemon, pokemon, pokemon };
+					pokeuser = DBDriver.getQuery(QUERY + regionQuery + "and " + pokQuery, params);
+					createTable();
+					return;
+				} else if (!regionflag && pokemonflag && age != 0) {
+					params = new String[] { age + "", region };
+					pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + regionQuery, params);
+					createTable();
+					return;
+				} else if (!regionflag && !pokemonflag && age != 0) {
+					params = new String[] { age + "", region, pokemon, pokemon, pokemon };
+					pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + regionQuery + "and " + pokQuery, params);
+					createTable();
+					return;
+				} else if (age == 0 && (less | great)) {
+					JOptionPane.showMessageDialog(this, "Hey you forgot to enter age", "Enter age",
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 			}
-			params = new String[] { name };
-			pokeuser = DBDriver.getQuery(QUERY + nameQuery, params);
-			createTable();
-		} else {
-			if (pokemonflag && regionflag && age == 0) {
-				JOptionPane.showMessageDialog(this,
-						"This Facilty is not there yet. Give us some time to make it ;)",
-						"Feature Coming Soon",
-						JOptionPane.INFORMATION_MESSAGE);
-				return;
-			}
-			if (age != 0 && pokemonflag && regionflag) { // single flags
-				params = new String[] { age + "" };
-				pokeuser = DBDriver.getQuery(QUERY + ageQuery, params);
-				createTable();
-				return;
-			} else if (!regionflag && pokemonflag && age == 0) {
-				params = new String[] { region };
-				pokeuser = DBDriver.getQuery(QUERY + regionQuery, params);
-				createTable();
-				return;
-			} else if (!pokemonflag && regionflag && age == 0) {
-				params = new String[] { pokemon, pokemon, pokemon };
-				pokeuser = DBDriver.getQuery(QUERY + pokQuery, params);
-				createTable();
-				return;
-			} else if (pokemonflag && !regionflag && age != 0) { // two flags
-				params = new String[] { age + "", region };
-				pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + regionQuery, params);
-				createTable();
-				return;
-			} else if (regionflag && !pokemonflag && age != 0) {
-				params = new String[] { age + "", pokemon, pokemon, pokemon };
-				pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + pokQuery, params);
-				createTable();
-				return;
-			} else if (!pokemonflag && !regionflag && age == 0) {
-				params = new String[] { region, pokemon, pokemon, pokemon };
-				pokeuser = DBDriver.getQuery(QUERY + regionQuery + "and " + pokQuery, params);
-				createTable();
-				return;
-			} else if (!regionflag && pokemonflag && age != 0) {
-				params = new String[] { age + "", region };
-				pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + regionQuery, params);
-				createTable();
-				return;
-			} else if (!regionflag && !pokemonflag && age != 0) {
-				params = new String[] { age + "", region, pokemon, pokemon, pokemon };
-				pokeuser = DBDriver.getQuery(QUERY + ageQuery + "and " + regionQuery + "and " + pokQuery, params);
-				createTable();
-				return;
-			} else if (age == 0 && (less | great)) {
-				JOptionPane.showMessageDialog(this, "Hey you forgot to enter age", "Enter age",
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+		} catch (ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "SQL Driver is not available to interact", "SQL Driver",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "File used to save your Database cannot be found", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, "Error occured while connecting with SQL database",
+					"Database Connection Failed",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void defaultTable() {
-		pokeuser = DBDriver.getQuery(QUERY.substring(0, QUERY.lastIndexOf(" w")) + " order by trainerank limit 30",
-				new String[] {});
+		try {
+			pokeuser = DBDriver.getQuery(QUERY.substring(0, QUERY.lastIndexOf(" w")) + " order by trainerank limit 30",
+					new String[] {});
+		} catch (ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "SQL Driver is not available to interact", "SQL Driver",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "File used to save your Database cannot be found", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, "Error occured while connecting with SQL database",
+					"Database Connection Failed",
+					JOptionPane.ERROR_MESSAGE);
+		}
 		createTable();
 	}
 
@@ -246,6 +275,10 @@ public class UserMenu extends SuperWindow implements ActionListener {
 		} else if (e.getSource() == search) {
 			worker();
 			return;
+		} else if (e.getSource() == create) {
+			new CreateUser();
+		} else if (e.getSource() == about) {
+			new About();
 		} else if (e.getSource() == lesserFlag) {
 			greaterFlag.setSelected(false);
 			return;
@@ -255,7 +288,20 @@ public class UserMenu extends SuperWindow implements ActionListener {
 		} else if (e.getSource() == delete) {
 			int index = table.getSelectedRow();
 			if (index != -1) {
-				DBDriver.deleteData(pokeuser.get(index).getId());
+				try {
+					DBDriver.deleteData(pokeuser.get(index).getId());
+				} catch (ClassNotFoundException ex) {
+					JOptionPane.showMessageDialog(this, "SQL Driver is not available to interact", "SQL Driver",
+							JOptionPane.ERROR_MESSAGE);
+				} catch (FileNotFoundException ex) {
+					JOptionPane.showMessageDialog(this, "File used to save your Database cannot be found",
+							"File Not Found",
+							JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException ex) {
+					JOptionPane.showMessageDialog(this, "Error occured while connecting with SQL database",
+							"Database Connection Failed",
+							JOptionPane.ERROR_MESSAGE);
+				}
 				pokeuser.remove(index);
 				createTable();
 			}
@@ -332,7 +378,9 @@ class TableModel extends AbstractTableModel {
 		String pokemon[] = user.get(rowIndex).getPokemon();
 		switch (columnIndex) {
 			case 0:
-				user.get(rowIndex).setId((int) aValue);
+				JOptionPane.showMessageDialog(null, "Cant change ID of trainer", "AntiDumb Squad",
+						JOptionPane.WARNING_MESSAGE);
+				return;
 			case 1:
 				user.get(rowIndex).setRank((int) aValue);
 				break;
@@ -357,11 +405,23 @@ class TableModel extends AbstractTableModel {
 			case 8:
 				user.get(rowIndex).setPokemon(new String[] { pokemon[0], pokemon[1], (String) aValue });
 		}
-		if (columnIndex < 6)
-			DBDriver.updateData("update trainer set " + sqlcols[columnIndex] + "= ? where id=?",
-					new Object[] { aValue, user.get(rowIndex).getId() });
-		else
-			DBDriver.updateData("update poketrainer set " + sqlcols[columnIndex] + "= ? where id=?",
-					new Object[] { aValue, user.get(rowIndex).getId() });
+		try {
+			if (columnIndex < 6)
+				DBDriver.updateData("update trainer set " + sqlcols[columnIndex] + "= ? where id=?",
+						new Object[] { aValue, user.get(rowIndex).getId() });
+			else
+				DBDriver.updateData("update poketrainer set " + sqlcols[columnIndex] + "= ? where id=?",
+						new Object[] { aValue, user.get(rowIndex).getId() });
+		} catch (ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "SQL Driver is not available to interact", "SQL Driver",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "File used to save your Database cannot be found", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error occured while connecting with SQL database",
+					"Database Connection Failed",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }
