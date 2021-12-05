@@ -1,6 +1,6 @@
 ## OOPS PROJECT
 
-A Record Management app for managing records of pokemon trainers in pokemon world.
+This is a Record Management System to manage the data of Pokemon Trainers appearing for the Pokemon League. Has all the basic operations like Create, Read, Update and Delete users (plus some extra features like sort, multi-field search, etc.) One of our members knew how to use Java Swing so we decided to make a GUI app after taking the permission of Dr. Shathana. The logic behind all the operations remains similar. We hope you like it UwU
 
 ## Team Members
 > - V Sai Suvanth
@@ -10,7 +10,7 @@ A Record Management app for managing records of pokemon trainers in pokemon worl
 > - Battula Chetan Reddy
 
 
-## Instructions
+## Instructions for Using the App
 
 Whole code is written in `src` folder.
 
@@ -18,7 +18,6 @@ Whole code is written in `src` folder.
 
 Meanwhile, the compiled output files will be generated in the `bin` folder by default.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
 - fork the repo and navigate to folder `src`.
 - Add mysql driver `mysql-connector-java-8.0.16.jar` to `lib` folder.
 
