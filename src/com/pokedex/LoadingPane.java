@@ -66,7 +66,7 @@ public class LoadingPane extends JWindow {
 			protected void done() {
 				try {
 					if (get()) {
-						File file = new File("src/com/pokedex/db/data.txt");
+						File file = new File("data.txt");
 						try {
 							FileWriter fw = new FileWriter(file);
 							fw.write(path + "\n" + username + "\n" + password);

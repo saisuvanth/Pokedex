@@ -37,7 +37,7 @@ public class WelcomePane extends JWindow {
 	}
 
 	private void worker() throws InterruptedException {
-		File file = new File("src/com/pokedex/db/data.txt");
+		File file = new File("data.txt");
 		if (file.exists()) {
 			Thread.sleep(2000);
 			this.dispose();

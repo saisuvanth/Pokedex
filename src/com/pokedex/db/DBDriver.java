@@ -16,7 +16,7 @@ public class DBDriver {
 
 	private static void sqlLoader() throws ClassNotFoundException, FileNotFoundException, SQLException {
 		Class.forName(DRIVER);
-		Scanner sc = new Scanner(new FileReader("src/com/pokedex/db/data.txt"));
+		Scanner sc = new Scanner(new FileReader("data.txt"));
 		connection = DriverManager.getConnection(sc.nextLine(), sc.nextLine(), sc.nextLine());
 		sc.close();
 	}
