@@ -4,6 +4,8 @@ This is a Record Management System to manage the data of Pokemon Trainers appear
 
 
 ## Instructions for Using the App
+- Open your MySQL database and make a database with name and give appropriate url in app
+- for example if you have a database called `pokedex` then you can use `jdbc:mysql://localhost:3306/pokedex`
 
 Whole code is written in `src` folder.
 
