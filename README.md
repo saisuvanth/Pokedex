@@ -1,6 +1,6 @@
-## OOPS PROJECT
+## Pokedex
 
-This is a Record Management System to manage the data of Pokemon Trainers appearing for the Pokemon League. Has all the basic operations like Create, Read, Update and Delete users (plus some extra features like sort, multi-field search, etc.) .The logic behind all the operations remains similar. We hope you like it UwU
+This is a Record Management System to manage the data of Pokemon Trainers. Has all the basic operations like Create, Read, Update and Delete users (plus some extra features like sort, multi-field search, etc.) .The logic behind all the operations remains similar. I hope you like it UwU
 
 
 ## Instructions for Using the App
